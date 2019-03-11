@@ -124,9 +124,10 @@ msgstr "Segna un \"Cose-da-fare\" come completato."
 msgid "Note is not a to-do: \"%s\""
 msgstr "La nota non è un \"Cose-da-fare\": \"%s\""
 
+#, fuzzy
 msgid ""
 "Manages E2EE configuration. Commands are `enable`, `disable`, `decrypt`, "
-"`status` and `target-status`."
+"`status`, `decrypt-file` and `target-status`."
 msgstr ""
 "Gestisci la configurazione E2EE. I comandi sono `abilita`, `disabilita`, "
 "`decripta`, `stato` e `stato-target`."
@@ -753,11 +754,11 @@ msgid "An update is available, do you want to download it now?"
 msgstr "È disponibile un aggiornamento, vuoi scaricarlo ora?"
 
 #, javascript-format
-msgid "Your version: v%s"
+msgid "Your version: %s"
 msgstr ""
 
 #, javascript-format
-msgid "New version: v%s"
+msgid "New version: %s"
 msgstr ""
 
 msgid "Yes"
@@ -1165,6 +1166,9 @@ msgid "Fetching resources: %d"
 msgstr "Risorse: %d."
 
 msgid "Please select where the sync status should be exported to"
+msgstr ""
+
+msgid "Table of contents"
 msgstr ""
 
 msgid "Add or remove tags"
@@ -1764,10 +1768,6 @@ msgid "Joplin website"
 msgstr "Sito web Joplin"
 
 #, javascript-format
-msgid "Joplin v%s"
-msgstr "Joplin v%s"
-
-#, javascript-format
 msgid "Database v%s"
 msgstr "Database v%s"
 
@@ -1888,6 +1888,9 @@ msgstr ""
 
 msgid "Welcome"
 msgstr "Benvenuto"
+
+#~ msgid "Joplin v%s"
+#~ msgstr "Joplin v%s"
 
 #~ msgid "Delete notes?"
 #~ msgstr "Eliminare le note?"

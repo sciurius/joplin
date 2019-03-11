@@ -126,7 +126,7 @@ msgstr ""
 
 msgid ""
 "Manages E2EE configuration. Commands are `enable`, `disable`, `decrypt`, "
-"`status` and `target-status`."
+"`status`, `decrypt-file` and `target-status`."
 msgstr ""
 
 msgid "Enter master password:"
@@ -717,12 +717,12 @@ msgid "An update is available, do you want to download it now?"
 msgstr "Güncelleme mevcut, şimdi indirmek ister misiniz?"
 
 #, javascript-format
-msgid "Your version: v%s"
-msgstr "Sürümün: v%s"
+msgid "Your version: %s"
+msgstr "Sürümün: %s"
 
 #, javascript-format
-msgid "New version: v%s"
-msgstr "Yeni sürüm: v%s"
+msgid "New version: %s"
+msgstr "Yeni sürüm: %s"
 
 msgid "Yes"
 msgstr "Evet"
@@ -1132,6 +1132,9 @@ msgstr "Kaynaklar alınıyor: %d"
 
 msgid "Please select where the sync status should be exported to"
 msgstr "Lütfen senkronizasyon durumunun nereye aktarılacağını seçin"
+
+msgid "Table of contents"
+msgstr ""
 
 #, fuzzy
 msgid "Add or remove tags"
@@ -1730,10 +1733,6 @@ msgid "Joplin website"
 msgstr "Joplin Web Sitesi"
 
 #, javascript-format
-msgid "Joplin v%s"
-msgstr "Joplin v%s"
-
-#, javascript-format
 msgid "Database v%s"
 msgstr "Veritabanı v%s"
 
@@ -1854,3 +1853,6 @@ msgstr ""
 
 msgid "Welcome"
 msgstr "Hoşgeldiniz"
+
+#~ msgid "Joplin v%s"
+#~ msgstr "Joplin v%s"

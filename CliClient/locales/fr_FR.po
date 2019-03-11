@@ -125,10 +125,11 @@ msgstr "La note n'est pas une tâche : \"%s\""
 
 msgid ""
 "Manages E2EE configuration. Commands are `enable`, `disable`, `decrypt`, "
-"`status` and `target-status`."
+"`status`, `decrypt-file` and `target-status`."
 msgstr ""
 "Gérer la configuration E2EE (Chiffrement de bout à bout). Les commandes sont "
-"`enable`, `disable`, `decrypt` et `status` et `target-status`."
+"`enable`, `disable`, `decrypt` et `status`, `decrypt-file` et `target-"
+"status`."
 
 msgid "Enter master password:"
 msgstr "Entrer le mot de passe maître :"
@@ -740,12 +741,12 @@ msgstr ""
 "Une mise à jour est disponible, souhaitez vous la télécharger maintenant ?"
 
 #, javascript-format
-msgid "Your version: v%s"
-msgstr "Votre version : v%s"
+msgid "Your version: %s"
+msgstr "Votre version : %s"
 
 #, javascript-format
-msgid "New version: v%s"
-msgstr "Nouvelle version : v%s"
+msgid "New version: %s"
+msgstr "Nouvelle version : %s"
 
 msgid "Yes"
 msgstr "Oui"
@@ -1160,6 +1161,9 @@ msgstr "Tél. ressources : %d"
 msgid "Please select where the sync status should be exported to"
 msgstr ""
 "Veuillez sélectionner un répertoire ou exporter l'état de la synchronisation"
+
+msgid "Table of contents"
+msgstr "Table des matières"
 
 msgid "Add or remove tags"
 msgstr "Gérer les étiquettes"
@@ -1759,10 +1763,6 @@ msgid "Joplin website"
 msgstr "Site web de Joplin"
 
 #, javascript-format
-msgid "Joplin v%s"
-msgstr "Joplin v%s"
-
-#, javascript-format
 msgid "Database v%s"
 msgstr "Base de données v%s"
 
@@ -1884,6 +1884,9 @@ msgstr ""
 
 msgid "Welcome"
 msgstr "Bienvenue"
+
+#~ msgid "Joplin v%s"
+#~ msgstr "Joplin v%s"
 
 #~ msgid "Remove?"
 #~ msgstr "Supprimer ?"

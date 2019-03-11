@@ -124,9 +124,10 @@ msgstr "Märker en att-göra som gjord."
 msgid "Note is not a to-do: \"%s\""
 msgstr "Anteckning är inte en att-göra: \"%s\""
 
+#, fuzzy
 msgid ""
 "Manages E2EE configuration. Commands are `enable`, `disable`, `decrypt`, "
-"`status` and `target-status`."
+"`status`, `decrypt-file` and `target-status`."
 msgstr ""
 "Hanterar E2EE-konfiguration. Kommandon är `enable`,` disable`, `decrypt`,` "
 "status` och `target-status`."
@@ -749,12 +750,12 @@ msgid "An update is available, do you want to download it now?"
 msgstr "En uppdatering är tillgänglig, vill du hämta den nu?"
 
 #, javascript-format
-msgid "Your version: v%s"
-msgstr "Din version: v%s"
+msgid "Your version: %s"
+msgstr "Din version: %s"
 
 #, javascript-format
-msgid "New version: v%s"
-msgstr "Ny version: v%s"
+msgid "New version: %s"
+msgstr "Ny version: %s"
 
 msgid "Yes"
 msgstr "Ja"
@@ -1162,6 +1163,9 @@ msgstr "Hämtar resurser: %d"
 
 msgid "Please select where the sync status should be exported to"
 msgstr "Välj vart synkroniseringstillståndet ska exporteras till"
+
+msgid "Table of contents"
+msgstr ""
 
 msgid "Add or remove tags"
 msgstr "Lägg till eller ta bort taggar"
@@ -1768,10 +1772,6 @@ msgid "Joplin website"
 msgstr "Joplin-webbplats"
 
 #, javascript-format
-msgid "Joplin v%s"
-msgstr "Joplin v%s"
-
-#, javascript-format
 msgid "Database v%s"
 msgstr "Databas v%s"
 
@@ -1894,6 +1894,9 @@ msgstr ""
 
 msgid "Welcome"
 msgstr "Välkommen"
+
+#~ msgid "Joplin v%s"
+#~ msgstr "Joplin v%s"
 
 #~ msgid "State: %s."
 #~ msgstr "Tillstånd: %s."

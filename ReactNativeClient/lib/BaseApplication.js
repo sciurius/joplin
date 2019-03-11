@@ -317,6 +317,12 @@ class BaseApplication {
 			SearchEngine.instance().scheduleSyncTables();
 		}
 
+		// Don't add FOLDER_UPDATE_ALL as refreshFolders() is calling it too, which
+		// would cause the sidebar to refresh all the time.
+		if (this.hasGui() && ["FOLDER_UPDATE_ONE"].indexOf(action.type) >= 0) {
+			refreshFolders = true;
+		}
+
 		if (action.type == 'FOLDER_SELECT' || action.type === 'FOLDER_DELETE' || action.type === 'FOLDER_AND_NOTE_SELECT' || (action.type === 'SEARCH_UPDATE' && newState.notesParentType === 'Folder')) {
 			Setting.setValue('activeFolderId', newState.selectedFolderId);
 			this.currentFolder_ = newState.selectedFolderId ? await Folder.load(newState.selectedFolderId) : null;

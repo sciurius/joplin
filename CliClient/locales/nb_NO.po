@@ -124,9 +124,10 @@ msgstr "Markerer et gjøremål som ferdig."
 msgid "Note is not a to-do: \"%s\""
 msgstr "Notat er ikke et gjøremål: \"%s\""
 
+#, fuzzy
 msgid ""
 "Manages E2EE configuration. Commands are `enable`, `disable`, `decrypt`, "
-"`status` and `target-status`."
+"`status`, `decrypt-file` and `target-status`."
 msgstr ""
 "Utfører E2EE-konfiguration. Tilgjengelige kommandoer er: `enable`(aktiver), "
 "`disable`(lukk), `decrypt`(dekrypter), `status` og `target-status` (mottager-"
@@ -741,12 +742,12 @@ msgid "An update is available, do you want to download it now?"
 msgstr "En oppdatering er tilgjengelig, vil du laste den ned nå?"
 
 #, javascript-format
-msgid "Your version: v%s"
-msgstr "Din versjon: v%s"
+msgid "Your version: %s"
+msgstr "Din versjon: %s"
 
 #, javascript-format
-msgid "New version: v%s"
-msgstr "Ny versjon: v%s"
+msgid "New version: %s"
+msgstr "Ny versjon: %s"
 
 msgid "Yes"
 msgstr "Ja"
@@ -1152,6 +1153,9 @@ msgstr "Henter ressurser: %d"
 
 msgid "Please select where the sync status should be exported to"
 msgstr "Velg hvor synkroniseringsstatusen skal eksporteres til"
+
+msgid "Table of contents"
+msgstr ""
 
 msgid "Add or remove tags"
 msgstr "Legg til eller fjern merkelapper"
@@ -1750,10 +1754,6 @@ msgstr "- Sted: for å legge ved stedsinformation til notatet."
 msgid "Joplin website"
 msgstr "Joplins nettsted"
 
-#, fuzzy, javascript-format
-msgid "Joplin v%s"
-msgstr "Joplin v%s"
-
 #, javascript-format
 msgid "Database v%s"
 msgstr "Database v%s"
@@ -1874,3 +1874,7 @@ msgstr "Du har enda ingen notatbok. Lag en ved å klikke på (+)-knappen."
 
 msgid "Welcome"
 msgstr "Velkommen"
+
+#, fuzzy
+#~ msgid "Joplin v%s"
+#~ msgstr "Joplin v%s"
