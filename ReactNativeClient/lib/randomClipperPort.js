@@ -4,7 +4,7 @@ function randomClipperPort(state, env) {
 		dev: 27583,
 	};
 
-	const startPort = env === 'prod' ? startPorts.prod : startPorts.dev;
+	const startPort = env === 'dev' ? startPorts.dev : startPorts.prod;
 
 	if (!state) {
 		state = { offset: 0 };
