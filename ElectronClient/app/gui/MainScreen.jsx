@@ -18,6 +18,7 @@ const layoutUtils = require('lib/layout-utils.js');
 const { bridge } = require('electron').remote.require('./bridge');
 const eventManager = require('../eventManager');
 const VerticalResizer = require('./VerticalResizer.min');
+const PluginManager = require('lib/services/PluginManager');
 
 class MainScreenComponent extends React.Component {
 
@@ -210,6 +211,15 @@ class MainScreenComponent extends React.Component {
 					type: 'SEARCH_SELECT',
 					id: this.searchId_,
 				});
+			} else {
+				const note = await Note.load(this.props.selectedNoteId);
+				if (note) {
+					this.props.dispatch({
+						type: "FOLDER_AND_NOTE_SELECT",
+						folderId: note.parent_id,
+						noteId: note.id,
+					});
+				}
 			}
 
 		} else if (command.name === 'commandNoteProperties') {
@@ -449,6 +459,9 @@ class MainScreenComponent extends React.Component {
 			);
 		}
 
+		const dialogInfo = PluginManager.instance().pluginDialogToShow(this.props.plugins);
+		const pluginDialog = !dialogInfo ? null :  <dialogInfo.Dialog {...dialogInfo.props}/>;
+
 		const modalLayerStyle = Object.assign({}, styles.modalLayer, { display: this.state.modalLayer.visible ? 'block' : 'none' });
 
 		const notePropertiesDialogOptions = this.state.notePropertiesDialogOptions;
@@ -457,12 +470,11 @@ class MainScreenComponent extends React.Component {
 			<div style={style}>
 				<div style={modalLayerStyle}>{this.state.modalLayer.message}</div>
 
-				<NotePropertiesDialog
+				{ notePropertiesDialogOptions.visible && <NotePropertiesDialog
 					theme={this.props.theme}
 					noteId={notePropertiesDialogOptions.noteId}
-					visible={!!notePropertiesDialogOptions.visible}
 					onClose={this.notePropertiesDialog_close}
-				/>
+				/> }
 
 				<PromptDialog
 					autocomplete={promptOptions && ('autocomplete' in promptOptions) ? promptOptions.autocomplete : null}
@@ -483,6 +495,8 @@ class MainScreenComponent extends React.Component {
 				<NoteList style={styles.noteList} />
 				<VerticalResizer style={styles.verticalResizer} onDrag={this.noteList_onDrag}/>
 				<NoteText style={styles.noteText} visiblePanes={this.props.noteVisiblePanes} />
+
+				{pluginDialog}	
 			</div>
 		);
 	}
@@ -503,6 +517,8 @@ const mapStateToProps = (state) => {
 		sidebarVisibility: state.sidebarVisibility,
 		sidebarWidth: state.settings['style.sidebar.width'],
 		noteListWidth: state.settings['style.noteList.width'],
+		selectedNoteId: state.selectedNoteIds.length === 1 ? state.selectedNoteIds[0] : null,
+		plugins: state.plugins,
 	};
 };
 

@@ -28,6 +28,11 @@ const ExternalEditWatcher = require('lib/services/ExternalEditWatcher');
 const { bridge } = require('electron').remote.require('./bridge');
 const Menu = bridge().Menu;
 const MenuItem = bridge().MenuItem;
+const PluginManager = require('lib/services/PluginManager');
+
+const pluginClasses = [
+	require('./plugins/GotoAnything.min'),
+];
 
 const appDefaultState = Object.assign({}, defaultState, {
 	route: {
@@ -308,6 +313,8 @@ class Application extends BaseApplication {
 
 		const importItems = [];
 		const exportItems = [];
+		const preferencesItems = [];
+		const toolsItemsFirst = [];
 		const ioService = new InteropService();
 		const ioModules = ioService.modules();
 		for (let i = 0; i < ioModules.length; i++) {
@@ -385,43 +392,199 @@ class Application extends BaseApplication {
 			}
 		});
 
-		const template = [
-			{
-				label: _('&File'),
-				/* `&` before one of the char in the label name mean, that
-				 * <Alt + F> will open this menu. It's needed becase electron
-				 * opens the first menu on Alt press if no hotkey assigned.
-				 * Issue: https://github.com/laurent22/joplin/issues/934 */
-				submenu: [{
-					label: _('New note'),
-					accelerator: 'CommandOrControl+N',
-					screens: ['Main'],
-					click: () => {
-						this.dispatch({
-							type: 'WINDOW_COMMAND',
-							name: 'newNote',
-						});
-					}
-				}, {
-					label: _('New to-do'),
-					accelerator: 'CommandOrControl+T',
-					screens: ['Main'],
-					click: () => {
-						this.dispatch({
-							type: 'WINDOW_COMMAND',
-							name: 'newTodo',
-						});
-					}
-				}, {
-					label: _('New notebook'),
-					screens: ['Main'],
-					click: () => {
-						this.dispatch({
-							type: 'WINDOW_COMMAND',
-							name: 'newNotebook',
-						});
-					}
-				}, {
+		/* We need a dummy entry, otherwise the ternary operator to show a
+		 * menu item only on a specific OS does not work. */
+		const noItem = {
+			type: 'separator',
+			visible: false
+		}
+
+		const syncStatusItem = {
+			label: _('Synchronisation status'),
+			click: () => {
+				this.dispatch({
+					type: 'NAV_GO',
+					routeName: 'Status',
+				});
+			}
+		}
+
+		const newNoteItem = {
+			label: _('New note'),
+			accelerator: 'CommandOrControl+N',
+			screens: ['Main'],
+			click: () => {
+				this.dispatch({
+					type: 'WINDOW_COMMAND',
+					name: 'newNote',
+				});
+			}
+		}
+
+		const newTodoItem = {
+			label: _('New to-do'),
+			accelerator: 'CommandOrControl+T',
+			screens: ['Main'],
+			click: () => {
+				this.dispatch({
+					type: 'WINDOW_COMMAND',
+					name: 'newTodo',
+				});
+			}
+		}
+
+		const newNotebookItem = {
+			label: _('New notebook'),
+			screens: ['Main'],
+			click: () => {
+				this.dispatch({
+					type: 'WINDOW_COMMAND',
+					name: 'newNotebook',
+				});
+			}
+		}
+
+		const printItem = {
+			label: _('Print'),
+			// accelerator: 'CommandOrControl+P',
+			screens: ['Main'],
+			click: () => {
+				this.dispatch({
+					type: 'WINDOW_COMMAND',
+					name: 'print',
+				});
+			}
+		}
+
+		preferencesItems.push({
+			label: _('General Options'),
+			accelerator: 'CommandOrControl+,',
+			click: () => {
+				this.dispatch({
+					type: 'NAV_GO',
+					routeName: 'Config',
+				});
+			}
+		}, {
+			label: _('Encryption options'),
+			click: () => {
+				this.dispatch({
+					type: 'NAV_GO',
+					routeName: 'EncryptionConfig',
+				});
+			}
+		}, {
+			label: _('Web clipper options'),
+			click: () => {
+				this.dispatch({
+					type: 'NAV_GO',
+					routeName: 'ClipperConfig',
+				});
+			}
+		});
+
+		toolsItemsFirst.push(syncStatusItem, {
+			type: 'separator',
+			screens: ['Main'],
+		});
+
+		const toolsItems = toolsItemsFirst.concat(preferencesItems);
+
+		function _checkForUpdates(ctx) {
+			bridge().checkForUpdates(false, bridge().window(), ctx.checkForUpdateLoggerPath(), { includePreReleases: Setting.value('autoUpdate.includePreReleases') });
+		}
+
+		function _showAbout() {
+			const p = packageInfo;
+			let message = [
+				p.description,
+				'',
+				'Copyright © 2016-2019 Laurent Cozic',
+				_('%s %s (%s, %s)', p.name, p.version, Setting.value('env'), process.platform),
+			];
+			bridge().showInfoMessageBox(message.join('\n'), {
+				icon: bridge().electronApp().buildDir() + '/icons/32x32.png',
+			});
+		}
+
+		const rootMenuFile = {
+			/* Using a dummy entry for macOS here, because first menu
+			 * becomes 'Joplin' and we need a nenu called 'File' later. */
+			label: shim.isMac() ? '&JoplinMainMenu' : _('&File'),
+			/* `&` before one of the char in the label name mean, that
+			 * <Alt + F> will open this menu. It's needed becase electron
+			 * opens the first menu on Alt press if no hotkey assigned.
+			 * Issue: https://github.com/laurent22/joplin/issues/934 */
+			submenu: [{
+				label: _('About Joplin'),
+				visible: shim.isMac() ? true : false,
+				click: () => _showAbout()
+			}, {
+				type: 'separator',
+				visible: shim.isMac() ? true : false
+			}, {
+				label: _('Preferences...'),
+				visible: shim.isMac() ? true : false,
+				submenu: preferencesItems
+			}, {
+				label: _('Check for updates...'),
+				visible: shim.isMac() ? true : false,
+				click: () => _checkForUpdates(this)
+			}, {
+				type: 'separator',
+				visible: shim.isMac() ? true : false
+			},
+			shim.isMac() ? noItem : newNoteItem,
+			shim.isMac() ? noItem : newTodoItem,
+			shim.isMac() ? noItem : newNotebookItem, {
+				type: 'separator',
+				visible: shim.isMac() ? false : true
+			}, {
+				label: _('Import'),
+				visible: shim.isMac() ? false : true,
+				submenu: importItems,
+			}, {
+				label: _('Export'),
+				visible: shim.isMac() ? false : true,
+				submenu: exportItems,
+			}, {
+				type: 'separator',
+			}, {
+				label: _('Synchronise'),
+				accelerator: 'CommandOrControl+S',
+				screens: ['Main'],
+				click: async () => {
+					this.dispatch({
+						type: 'WINDOW_COMMAND',
+						name: 'synchronize',
+					});
+				}
+			}, shim.isMac() ? syncStatusItem : noItem, {
+				type: 'separator',
+			}, shim.isMac() ? noItem : printItem, {
+				type: 'separator',
+				platforms: ['darwin'],
+			}, {
+				label: _('Hide %s', 'Joplin'),
+				platforms: ['darwin'],
+				accelerator: 'CommandOrControl+H',
+				click: () => { bridge().electronApp().hide() }
+			}, {
+				type: 'separator',
+			}, {
+				label: _('Quit'),
+				accelerator: 'CommandOrControl+Q',
+				click: () => { bridge().electronApp().quit() }
+			}]
+		};
+
+		const rootMenuFileMacOs = {
+			label: _('&File'),
+			visible: shim.isMac() ? true : false,
+			submenu: [
+				newNoteItem,
+				newTodoItem,
+				newNotebookItem, {
 					type: 'separator',
 				}, {
 					label: _('Import'),
@@ -431,44 +594,13 @@ class Application extends BaseApplication {
 					submenu: exportItems,
 				}, {
 					type: 'separator',
-				}, {
-					label: _('Synchronise'),
-					accelerator: 'CommandOrControl+S',
-					screens: ['Main'],
-					click: async () => {
-						this.dispatch({
-							type: 'WINDOW_COMMAND',
-							name: 'synchronize',
-						});
-					}
-				}, {
-					type: 'separator',
-				}, {
-					label: _('Print'),
-					accelerator: 'CommandOrControl+P',
-					screens: ['Main'],
-					click: () => {
-						this.dispatch({
-							type: 'WINDOW_COMMAND',
-							name: 'print',
-						});
-					}
-				}, {
-					type: 'separator',
-					platforms: ['darwin'],
-				}, {
-					label: _('Hide %s', 'Joplin'),
-					platforms: ['darwin'],
-					accelerator: 'CommandOrControl+H',
-					click: () => { bridge().electronApp().hide() }
-				}, {
-					type: 'separator',
-				}, {
-					label: _('Quit'),
-					accelerator: 'CommandOrControl+Q',
-					click: () => { bridge().electronApp().quit() }
-				}]
-			}, {
+				},
+				printItem
+			]
+		};
+
+		const rootMenus = {
+			edit: {
 				label: _('&Edit'),
 				submenu: [{
 					label: _('Copy'),
@@ -569,7 +701,8 @@ class Application extends BaseApplication {
 						});
 					},
 				}],
-			}, {
+			},
+			view: {
 				label: _('&View'),
 				submenu: [{
 					label: _('Toggle sidebar'),
@@ -626,46 +759,12 @@ class Application extends BaseApplication {
 					screens: ['Main'],
 					submenu: focusItems,
 				}],
-			}, {
+			},
+			tools: {
 				label: _('&Tools'),
-				submenu: [{
-					label: _('Synchronisation status'),
-					click: () => {
-						this.dispatch({
-							type: 'NAV_GO',
-							routeName: 'Status',
-						});
-					}
-				}, {
-					type: 'separator',
-					screens: ['Main'],
-				},{
-					label: _('Web clipper options'),
-					click: () => {
-						this.dispatch({
-							type: 'NAV_GO',
-							routeName: 'ClipperConfig',
-						});
-					}
-				},{
-					label: _('Encryption options'),
-					click: () => {
-						this.dispatch({
-							type: 'NAV_GO',
-							routeName: 'EncryptionConfig',
-						});
-					}
-				},{
-					label: _('General Options'),
-					accelerator: 'CommandOrControl+,',
-					click: () => {
-						this.dispatch({
-							type: 'NAV_GO',
-							routeName: 'Config',
-						});
-					}
-				}],
-			}, {
+				submenu: shim.isMac() ? [] : toolsItems,
+			},
+			help: {
 				label: _('&Help'),
 				submenu: [{
 					label: _('Website and documentation'),
@@ -676,29 +775,42 @@ class Application extends BaseApplication {
 					click () { bridge().openExternal('https://joplin.cozic.net/donate') }
 				}, {
 					label: _('Check for updates...'),
-					click: () => {
-						bridge().checkForUpdates(false, bridge().window(), this.checkForUpdateLoggerPath(), { includePreReleases: Setting.value('autoUpdate.includePreReleases') });
-					}
+					visible: shim.isMac() ? false : true,
+					click: () => _checkForUpdates(this)
 				}, {
 					type: 'separator',
+					visible: shim.isMac() ? false : true,
 					screens: ['Main'],
 				}, {
 					label: _('About Joplin'),
-					click: () => {
-						const p = packageInfo;
-						let message = [
-							p.description,
-							'',
-							'Copyright © 2016-2019 Laurent Cozic',
-							_('%s %s (%s, %s)', p.name, p.version, Setting.value('env'), process.platform),
-						];
-						bridge().showInfoMessageBox(message.join('\n'), {
-							icon: bridge().electronApp().buildDir() + '/icons/32x32.png',
-						});
-					}
+					visible: shim.isMac() ? false : true,
+					click: () => _showAbout()
 				}]
-			},
+			},	
+		};
+
+		if (shim.isMac()) {
+			rootMenus.macOsApp = rootMenuFile;
+			rootMenus.file = rootMenuFileMacOs;
+		} else {
+			rootMenus.file = rootMenuFile;
+		}
+
+		const pluginMenuItems = PluginManager.instance().menuItems();
+		for (const item of pluginMenuItems) {
+			let itemParent = rootMenus[item.parent] ? rootMenus[item.parent] : 'tools';
+			itemParent.submenu.push(item);
+		}
+
+		const template = [
+			rootMenus.file,
+			rootMenus.edit,
+			rootMenus.view,
+			rootMenus.tools,
+			rootMenus.help,
 		];
+
+		if (shim.isMac()) template.splice(0, 0, rootMenus.macOsApp);
 
 		function isEmptyMenu(template) {
 			for (let i = 0; i < template.length; i++) {
@@ -812,6 +924,10 @@ class Application extends BaseApplication {
 		if (Setting.value('openDevTools')) {
 			bridge().window().webContents.openDevTools();
 		}
+
+		PluginManager.instance().dispatch_ = this.dispatch.bind(this);
+		PluginManager.instance().setLogger(reg.logger());
+		PluginManager.instance().register(pluginClasses);
 
 		this.updateMenu('Main');
 

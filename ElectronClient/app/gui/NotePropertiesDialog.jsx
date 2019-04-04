@@ -23,7 +23,6 @@ class NotePropertiesDialog extends React.Component {
 			formNote: null,
 			editedKey: null,
 			editedValue: null,
-			visible: false,
 		};
 
 		this.keyToLabel_ = {
@@ -35,14 +34,8 @@ class NotePropertiesDialog extends React.Component {
 		};
 	}
 
-	componentWillReceiveProps(newProps) {
-		if ('visible' in newProps && newProps.visible !== this.state.visible) {
-			this.setState({ visible: newProps.visible });
-		}
-
-		if ('noteId' in newProps) {
-			this.loadNote(newProps.noteId);
-		}
+	componentDidMount() {
+		this.loadNote(this.props.noteId);
 	}
 
 	componentDidUpdate() {
@@ -109,25 +102,25 @@ class NotePropertiesDialog extends React.Component {
 		this.styles_ = {};
 		this.styleKey_ = styleKey;
 
-		this.styles_.modalLayer = {
-			zIndex: 9999,
-			display: 'flex',
-			position: 'absolute',
-			top: 0,
-			left: 0,
-			width: '100%',
-			height: '100%',
-			backgroundColor: 'rgba(0,0,0,0.6)',
-			alignItems: 'flex-start',
-			justifyContent: 'center',
-		};
+		// this.styles_.modalLayer = {
+		// 	zIndex: 9999,
+		// 	display: 'flex',
+		// 	position: 'absolute',
+		// 	top: 0,
+		// 	left: 0,
+		// 	width: '100%',
+		// 	height: '100%',
+		// 	backgroundColor: 'rgba(0,0,0,0.6)',
+		// 	alignItems: 'flex-start',
+		// 	justifyContent: 'center',
+		// };
 
-		this.styles_.dialogBox = {
-			backgroundColor: theme.backgroundColor,
-			padding: 16,
-			boxShadow: '6px 6px 20px rgba(0,0,0,0.5)',
-			marginTop: 20,
-		}
+		// this.styles_.dialogBox = {
+		// 	backgroundColor: theme.backgroundColor,
+		// 	padding: 16,
+		// 	boxShadow: '6px 6px 20px rgba(0,0,0,0.5)',
+		// 	marginTop: 20,
+		// }
 
 		this.styles_.controlBox = {
 			marginBottom: '1em',
@@ -160,7 +153,7 @@ class NotePropertiesDialog extends React.Component {
 			borderColor: theme.dividerColor,
 		};
 
-		this.styles_.dialogTitle = Object.assign({}, theme.h1Style, { marginBottom: '1.2em' });
+		// this.styles_.dialogTitle = Object.assign({}, theme.h1Style, { marginBottom: '1.2em' });
 
 		return this.styles_;
 	}
@@ -174,10 +167,6 @@ class NotePropertiesDialog extends React.Component {
 		} else {
 			await this.cancelProperty();
 		}
-
-		this.setState({
-			visible: false,
-		});
 
 		if (this.props.onClose) {
 			this.props.onClose();
@@ -379,9 +368,6 @@ class NotePropertiesDialog extends React.Component {
 
 		const noteComps = [];
 
-		const modalLayerStyle = Object.assign({}, styles.modalLayer);
-		if (!this.state.visible) modalLayerStyle.display = 'none';
-
 		if (formNote) {
 			for (let key in formNote) {
 				if (!formNote.hasOwnProperty(key)) continue;
@@ -391,9 +377,9 @@ class NotePropertiesDialog extends React.Component {
 		}
 
 		return (
-			<div style={modalLayerStyle}>
-				<div style={styles.dialogBox}>
-					<div style={styles.dialogTitle}>{_('Note properties')}</div>
+			<div style={theme.dialogModalLayer}>
+				<div style={theme.dialogBox}>
+					<div style={theme.dialogTitle}>{_('Note properties')}</div>
 					<div>{noteComps}</div>
 					<div style={{ textAlign: 'right', marginTop: 10 }}>
 						{buttonComps}
